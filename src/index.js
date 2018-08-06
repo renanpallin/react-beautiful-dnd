@@ -23,21 +23,33 @@ export class App extends React.Component {
 			return;
 
 		const { columns } = this.state;
-		const column = columns[source.droppableId];
-		const newTaskIds = [...column.taskIds];
+		const sourceColumn = columns[source.droppableId];
+		const destinationColumn = columns[destination.droppableId];
 
-		newTaskIds.splice(source.index, 1);
-		newTaskIds.splice(destination.index, 0, draggableId);
+		const sourceTasks = [...sourceColumn.taskIds];
+		const destinationTasks =
+			source.droppableId === destination.droppableId
+				? sourceTasks
+				: [...destinationColumn.taskIds];
 
-		const newColumn = {
-			...column,
-			taskIds: newTaskIds,
+		sourceTasks.splice(source.index, 1);
+		destinationTasks.splice(destination.index, 0, draggableId);
+
+		const newSourceColumn = {
+			...sourceColumn,
+			taskIds: sourceTasks,
+		};
+
+		const newDestinationColumn = {
+			...destinationColumn,
+			taskIds: destinationTasks,
 		};
 
 		this.setState({
 			columns: {
 				...columns,
-				[newColumn.id]: newColumn,
+				[newSourceColumn.id]: newSourceColumn,
+				[newDestinationColumn.id]: newDestinationColumn,
 			},
 		});
 	};
